@@ -2,35 +2,20 @@
 SQL for electronic medical record data
 
 ## Problem Setting
-
-Thanks for clarifying! I’ll put together a technical summary of methods for information extraction and annotation from Electronic Medical Records (EMR/EHR) over the past 5 years. I'll focus on comparing different techniques, including NLP, machine learning, and deep learning approaches, across all types of extracted information. I'll get back to you shortly with a detailed comparison.
-
-# Information Extraction from Electronic Health Records (2019–2024)
+### Information Extraction from Electronic Health Records (2019–2024)
 
 Electronic health records (EHR) contain vast amounts of unstructured clinical text. Automated **information extraction (IE)** (e.g. named entity recognition of clinical concepts, relation extraction between entities, section classification) and annotation tools are needed to convert this text into structured data. Over the last five years, the field has seen a clear shift from rule-based and feature-engineered methods toward deep learning, especially transformer-based models. Table 1 summarizes representative tasks, datasets, and top performances. We discuss each class of methods below, along with datasets, benchmarks, metrics, and emerging trends.
 
 | **Task (Dataset)**                           | **Top Method(s)**                   | **Best F1 (approx.)**        | **Notes / Reference**                                          |
 |---------------------------------------------|-------------------------------------|------------------------------|---------------------------------------------------------------|
 | Clinical concept NER (i2b2 2010)            | Transformer (BERT, ClinicalBERT)    | ~90.3% ([[1902.08691] Enhancing Clinical Concept Extraction with Contextual Embeddings](https://ar5iv.org/pdf/1902.08691#:~:text=performances%20across%20all%20concept%20extraction,for%20in%20traditional%20word%20representations))           | SOTA achieved by clinical-domain BERT ([[1902.08691] Enhancing Clinical Concept Extraction with Contextual Embeddings](https://ar5iv.org/pdf/1902.08691#:~:text=performances%20across%20all%20concept%20extraction,for%20in%20traditional%20word%20representations))            |
-| Medication/name NER (n2c2 2018)            | BiLSTM-CRF with embeddings          | ~95–97% ([
-            Medical Information Extraction in the Age of Deep Learning - PMC
-        ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=Except%20for%20route%20and%20ADE%2C,1))        | High performance on drug names/frequency/route ([
-            Medical Information Extraction in the Age of Deep Learning - PMC
-        ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=Except%20for%20route%20and%20ADE%2C,1)) |
-| Adverse drug event NER (MADE 2018)         | BiLSTM-CRF                          | ~53–64% ([
-            Medical Information Extraction in the Age of Deep Learning - PMC
-        ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=recognition%20of%20ADEs%20seems%20to,constrained%20type%20of%20natural%20language))        | Remains challenging (best ≈64% F1) ([
-            Medical Information Extraction in the Age of Deep Learning - PMC
-        ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=recognition%20of%20ADEs%20seems%20to,constrained%20type%20of%20natural%20language))           |
-| Med–attribute relation extraction (n2c2)    | CNN+RNN + rules (joint model)       | ~98% (freq/route/dose), ~85% (ADE) ([
-            Medical Information Extraction in the Age of Deep Learning - PMC
-        ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=who%20achieved%20top%20F%20_,percentage%20points)) | Hybrid NN+rule approach yields SOTA ([
-            Medical Information Extraction in the Age of Deep Learning - PMC
-        ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=The%20top%20performers%20for%20the,based%29%20BiLSTM%2C%20with%20preferences))            |
+|Medication/name NER (n2c2 2018)            | BiLSTM-CRF with embeddings          | ~95–97% ([Medical Information Extraction in the Age of Deep Learning - PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=Except%20for%20route%20and%20ADE%2C,1))        | High performance on drug names/frequency/route ([Medical Information Extraction in the Age of Deep Learning - PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=Except%20for%20route%20and%20ADE%2C,1)) |
+| Adverse drug event NER (MADE 2018)         | BiLSTM-CRF                          | ~53–64% ([Medical Information Extraction in the Age of Deep Learning - PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=recognition%20of%20ADEs%20seems%20to,constrained%20type%20of%20natural%20language))        | Remains challenging (best ≈64% F1) ([Medical Information Extraction in the Age of Deep Learning - PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=recognition%20of%20ADEs%20seems%20to,constrained%20type%20of%20natural%20language))           |
+| Med–attribute relation extraction (n2c2)    | CNN+RNN + rules (joint model)       | ~98% (freq/route/dose), ~85% (ADE) ([Medical Information Extraction in the Age of Deep Learning - PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=who%20achieved%20top%20F%20_,percentage%20points)) | Hybrid NN+rule approach yields SOTA ([Medical Information Extraction in the Age of Deep Learning - PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=The%20top%20performers%20for%20the,based%29%20BiLSTM%2C%20with%20preferences))            |
 
 **Table 1:** *Selected IE tasks, top-performing methods, and example F1 scores from recent studies on clinical text (F1 ~ harmonic mean of precision and recall). References cite reported results on public benchmarks.*
 
-## Traditional and Rule-Based NLP Methods  
+#### Traditional and Rule-Based NLP Methods  
 Early EHR IE systems relied on handcrafted rules, lexicons, and syntactic patterns. Tools like **cTAKES**, **MetaMap** or UMLS-based annotators use dictionaries, regular expressions and grammar rules to identify medical terms (diseases, drugs, labs, etc.) ([
             Clinical named-entity recognition: A short comparison - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC9028678/#:~:text=clinical%20data,version%20of%20an%20annotated%20dataset)) ([
@@ -41,7 +26,7 @@ Early EHR IE systems relied on handcrafted rules, lexicons, and syntactic patter
             Medical Information Extraction in the Age of Deep Learning - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=The%20top%20performers%20for%20the,based%29%20BiLSTM%2C%20with%20preferences)).  A 2022 review observed that roughly 40–45% of hypertension-related NLP studies still employ rule-based components ([Development and Application of Natural Language Processing on Unstructured Data in Hypertension: A Scoping Review | medRxiv](https://www.medrxiv.org/content/10.1101/2024.02.27.24303468v2.full-text#:~:text=number%20of%20studies%20%28N%3D6%2C%2013.3,studies%20trained%20machine%2Fdeep%20learning%20models)). 
 
-## Machine Learning (Feature-Based)  
+#### Machine Learning (Feature-Based)  
 Traditional ML approaches extract features (n-grams, dictionary matches, syntax) and use classifiers like **Conditional Random Fields (CRFs)** or SVMs for sequence labeling.  CRF models were a standard for clinical NER: they model the label sequence jointly and can enforce tag consistency.  Shallow ML methods were widely applied in i2b2/n2c2 challenges through 2010–2015. For instance, CRFs achieved respectable performance on disease and medication NER (often F1 in the 70–85% range on small corpora).  However, studies note that “shallow classifiers and rule-based techniques” are still commonly used but inherently limit the ability to capture complex context ([A Survey of Deep Learning for Electronic Health Records](https://www.mdpi.com/2076-3417/12/22/11709#:~:text=NER.%20Sheikhalishahi%20et%20al.%20,45%5D%20looked%20into%20how)).  These methods require careful feature engineering (e.g. lexicon lookups, context windows) and often plateau once features are optimized.  
 
 Machine-learned models (especially CRFs) still play a role on smaller datasets.  In some benchmarks, well-tuned CRF or SVM models remain competitive: e.g. for medication–attribute relations on the MADE 2018 corpus, non-deep classifiers slightly outperformed neural models on several sub-tasks ([
@@ -50,7 +35,7 @@ Machine-learned models (especially CRFs) still play a role on smaller datasets. 
             Medical Information Extraction in the Age of Deep Learning - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=Results%20%3A%20In%20the%20past,overcome%20by%20adaptive%20learning%20strategies)) ([Named Entity Recognition in Medical Domain: A systematic Literature Review | Kusuma | JOIV : International Journal on Informatics Visualization](https://joiv.org/index.php/joiv/article/view/3111#:~:text=Springer,performance%20of%20these%20models%20mostly)).  Modern IE pipelines rarely use pure CRF/SVM systems as state-of-the-art, except in very low-data settings.
 
-## Deep Learning Approaches  
+#### Deep Learning Approaches  
 Deep neural networks have dominated recent EHR IE. Early deep models included **Recurrent Neural Networks** (RNNs) such as bidirectional LSTM (BiLSTM) often combined with a CRF output layer. BiLSTM-CRFs were (and still are) popular for NER: they learn contextual embeddings of words and capture label dependencies.  **Convolutional Neural Networks (CNNs)** have been applied to sequence tasks by sliding filters over embeddings (useful for capturing local features) and also for relation classification. These networks typically use pre-trained word embeddings (Word2Vec, GloVe) or medical-domain embeddings (trained on MIMIC-III) as input ([
             Medical Information Extraction in the Age of Deep Learning - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=In%20terms%20of%20DL%20methodology%2C,III%2C%20might%20be%20advantageous)). 
@@ -61,7 +46,7 @@ With deep learning, performance jumped: for example, disease NER near 90% F1 on 
             Medical Information Extraction in the Age of Deep Learning - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=who%20achieved%20top%20F%20_,percentage%20points)).  However, these networks still require lots of annotated data and task-specific tuning.
 
-### Transformer-Based and Contextual Models  
+##### Transformer-Based and Contextual Models  
 Since 2019, **transformer models** (BERT and its variants) have set new state-of-the-art across virtually all EHR IE tasks. Transformers use self-attention to encode context and are often fine-tuned for a target task.  Domain-specific pretrained models (e.g. **BioBERT**, **ClinicalBERT**, **BlueBERT**, **PubMedBERT**) are trained on biomedical/EHR text and significantly improve clinical concept recognition ([[1902.08691] Enhancing Clinical Concept Extraction with Contextual Embeddings](https://ar5iv.org/pdf/1902.08691#:~:text=performances%20across%20all%20concept%20extraction,for%20in%20traditional%20word%20representations)) ([A Survey of Deep Learning for Electronic Health Records](https://www.mdpi.com/2076-3417/12/22/11709#:~:text=At%20present%2C%20the%20best%20performance,level%20convolutional)).  For example, ClinicalBERT (pretrained on MIMIC notes) achieved ~90.3% F1 on the i2b2 2010 concept extraction task ([[1902.08691] Enhancing Clinical Concept Extraction with Contextual Embeddings](https://ar5iv.org/pdf/1902.08691#:~:text=performances%20across%20all%20concept%20extraction,for%20in%20traditional%20word%20representations)), exceeding earlier methods. 
 
 Transformers also dominate relation extraction and document classification.  Researchers typically frame IE tasks as sequence-labeling (BIO tagging) for NER or as token pair classification for relations ([A large language model for electronic health records | npj Digital Medicine](https://www.nature.com/articles/s41746-022-00742-2#:~:text=clinical%20concepts%20on%20the%20three,and%20achieved%20the%20best%20F1)) ([Named Entity Recognition in Electronic Health Records: A Methodological Review - PubMed](https://pubmed.ncbi.nlm.nih.gov/37964451/#:~:text=between%20them,within%20a%20specific%20clinical%20domain)).  Notably, a 2024 EHR-NER review found that BERT-style models (with “BIO” tagging) are now *“the most frequently reported”* approach ([Named Entity Recognition in Electronic Health Records: A Methodological Review - PubMed](https://pubmed.ncbi.nlm.nih.gov/37964451/#:~:text=between%20them,within%20a%20specific%20clinical%20domain)).  Hybrid training schemes (multi-task or transfer learning across entities) have also been explored to boost performance when data is scarce ([A Survey of Deep Learning for Electronic Health Records](https://www.mdpi.com/2076-3417/12/22/11709#:~:text=based%20on%20general%20neural%20network,performing)).  
@@ -72,7 +57,7 @@ In summary, the “paradigm shift” from feature-based ML to deep learning is n
             Medical Information Extraction in the Age of Deep Learning - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=Results%20%3A%20In%20the%20past,overcome%20by%20adaptive%20learning%20strategies)) ([[1902.08691] Enhancing Clinical Concept Extraction with Contextual Embeddings](https://ar5iv.org/pdf/1902.08691#:~:text=performances%20across%20all%20concept%20extraction,for%20in%20traditional%20word%20representations)). 
 
-## Hybrid and Knowledge-Infused Models  
+#### Hybrid and Knowledge-Infused Models  
 Recent methods often combine neural models with rules or external knowledge. For instance, top systems for medication–attribute relation extraction used a **CNN+RNN architecture with rule-based postprocessing** ([
             Medical Information Extraction in the Age of Deep Learning - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=The%20top%20performers%20for%20the,based%29%20BiLSTM%2C%20with%20preferences)). This hybrid approach leverages the flexibility of neural nets while enforcing medical constraints via rules.  Another trend is incorporating **domain ontologies or gazetteers** into neural pipelines.  For example, Nie *et al.*’s KA-NER model augmented BERT with UMLS concept embeddings, achieving an average F1≈84.8% across multiple NER corpora ([A Survey of Deep Learning for Electronic Health Records](https://www.mdpi.com/2076-3417/12/22/11709#:~:text=,this%20model%20on%20multiple%20datasets)). Knowledge-guided embeddings can help disambiguate terms and improve generalization.  
@@ -81,14 +66,14 @@ In general, hybrid systems aim to capture the benefits of both worlds: data-driv
             Medical Information Extraction in the Age of Deep Learning - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=For%20the%20MADE%201,where%20the%20DL%20approach%20ranked)).  
 
-## Large Language Models (LLMs) and Pretrained Transformers  
+#### Large Language Models (LLMs) and Pretrained Transformers  
 The latest frontier is using very large pretrained models for IE. Beyond BERT-scale (100M–1B parameters), **medical LLMs** and general LLMs have been tested on EHR data.  For example, NVIDIA’s GatorTron (8.9B parameters, trained on >90B words of clinical text) yielded modest gains on multiple clinical NLP tasks (NER, relation extraction, inference) compared to smaller models ([A large language model for electronic health records | npj Digital Medicine](https://www.nature.com/articles/s41746-022-00742-2#:~:text=NLP%20tasks,com%2Forgs%2Fnvidia%2Fteams%2Fclar)).  While GatorTron improved accuracy on inference tasks by ~9–10% ([A large language model for electronic health records | npj Digital Medicine](https://www.nature.com/articles/s41746-022-00742-2#:~:text=NLP%20tasks,com%2Forgs%2Fnvidia%2Fteams%2Fclar)), it also showed that classic extraction tasks are approaching saturation (large models gave only “moderate improvements for easier tasks” like concept recognition ([A large language model for electronic health records | npj Digital Medicine](https://www.nature.com/articles/s41746-022-00742-2#:~:text=answering%2C%20but%20moderate%20improvements%20for,saturation%20of%20simpler%20benchmarks%20with))). 
 
 **ChatGPT and GPT-like models** have recently been explored for EHR IE. A 2024 study used ChatGPT-3.5 (text-davinci) to extract pathology report fields. Without any task-specific training, ChatGPT achieved ~89% accuracy on lung cancer classification and ~99% on osteosarcoma report tasks, outperforming traditional NLP baselines ([A critical assessment of using ChatGPT for extracting structured data from clinical notes | npj Digital Medicine](https://www.nature.com/articles/s41746-024-01079-8#:~:text=demonstrated%20the%20ability%20to%20extract,notes%20for%20structured%20information%20extraction)). This demonstrates LLMs’ potential to do zero-shot information extraction from clinical text. However, these models depend heavily on prompt design and may err on specialized terminology ([A critical assessment of using ChatGPT for extracting structured data from clinical notes | npj Digital Medicine](https://www.nature.com/articles/s41746-024-01079-8#:~:text=traditional%20NLP%20methods,human%20annotation%20and%20model%20training)).  (For a clinical audience: ChatGPT acts as a “black-box” NER/IE tool via natural-language prompts, but reliability/hallucination remain concerns.)  
 
 In summary, transformer-based pretrained models (from BioBERT to GPT-4) are becoming mainstream. Their trend is toward *pretrain then fine-tune* or *prompt and infer*. Domain-specific pretraining (e.g. on MIMIC or PubMed) generally helps; but even large general LLMs can perform well with proper prompting. The field is actively assessing how best to integrate LLMs into clinical workflows (weaker labeling requirements vs risk of error).
 
-## Datasets and Benchmarks  
+#### Datasets and Benchmarks  
 Several public datasets and shared tasks drive progress in EHR IE:  
 
 - **i2b2/VA and n2c2 Challenges (2006–2020):** These workshops provided annotated clinical notes for various IE tasks. Notably, i2b2/VA (2009–2012) included concept extraction (disease, drug, etc.) and relations ([[1902.08691] Enhancing Clinical Concept Extraction with Contextual Embeddings](https://ar5iv.org/pdf/1902.08691#:~:text=performances%20across%20all%20concept%20extraction,for%20in%20traditional%20word%20representations)).  n2c2 (formerly i2b2) hosted tasks like medication-attribute extraction (2018) and a variety of phenotyping tasks. For example, the n2c2 2018 medication challenge (track 2) produced ∼1,100 de-identified oncology notes labeled with drugs, dosages, and ADE relations (over 83k entity mentions and 59k relations) ([
@@ -113,7 +98,7 @@ These datasets are evaluated with standard metrics: **precision, recall, and F1-
             Approach to machine learning for extraction of real-world data variables from electronic health records - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC10541019/#:~:text=%E2%80%A2%20F1%20Score%3A%20Computed%20as,balance%20of%20sensitivity%20and%20PPV)). For binary extraction tasks, accuracy or AUC may be reported, but F1 is primary.  Table 1 and the above text cite example F1 results on public benchmarks.
 
-## Evaluation Metrics  
+#### Evaluation Metrics  
 IE systems are typically evaluated on held-out annotated test sets. Common metrics are: **Precision** (positive predictive value), **Recall** (sensitivity), and their **F1-score** (harmonic mean) ([
             Approach to machine learning for extraction of real-world data variables from electronic health records - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC10541019/#:~:text=Performance%20metric%20definitions%20%E2%80%A2%20Sensitivity,extracted%20as)) ([
@@ -124,7 +109,7 @@ IE systems are typically evaluated on held-out annotated test sets. Common metri
             Approach to machine learning for extraction of real-world data variables from electronic health records - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC10541019/#:~:text=%E2%80%A2%20F1%20Score%3A%20Computed%20as,balance%20of%20sensitivity%20and%20PPV)). In medical NLP, even F1 scores in the 0.70–0.85 range can be valuable given complexity and safety needs. 
 
-## Performance Trends and Comparisons  
+#### Performance Trends and Comparisons  
 The broad trend is clear: **deep learning > classical ML > rule-based** on most benchmarks.  Udo Hahn *et al.* summarize that “overwhelming experimental evidence… DL-based approaches outperform non-DL ones by often large margins” ([
             Medical Information Extraction in the Age of Deep Learning - PMC
         ](https://pmc.ncbi.nlm.nih.gov/articles/PMC7442512/#:~:text=Results%20%3A%20In%20the%20past,overcome%20by%20adaptive%20learning%20strategies)).  Systematic reviews confirm a shift: recent surveys report a transition from conventional ML to deep (especially transformers) ([Named Entity Recognition in Medical Domain: A systematic Literature Review | Kusuma | JOIV : International Journal on Informatics Visualization](https://joiv.org/index.php/joiv/article/view/3111#:~:text=Springer,availability%20to%20build%20accurate%20models)), and contextual models achieve new SOTA on all tasks ([[1902.08691] Enhancing Clinical Concept Extraction with Contextual Embeddings](https://ar5iv.org/pdf/1902.08691#:~:text=performances%20across%20all%20concept%20extraction,for%20in%20traditional%20word%20representations)). 
